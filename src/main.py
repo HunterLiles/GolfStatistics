@@ -5,33 +5,20 @@ left_column, right_column = st.columns(2)
 
 conn = st.connection("golf_db", type="sql")
 
-left_column.title('Golf Stuff')
+left_column.title('My Golf Data')
 left_column.divider()
 st.sidebar.title('Golf Statistics')
-
-st.sidebar.subheader('Tables')
-
-ColumnOption1 = st.sidebar.selectbox(
-    "Select option",
-    conn.query("SELECT RoundID AS 'Round', CourseID AS 'Course Names' FROM GolfRound").columns
-)
 
 
 @st.fragment()
 def view_rounds():
     if st.button("Refresh"): pass
 
-    if ColumnOption1 == "Course Names":
-        with st.spinner("Figuring stuff out..."):
-            st.write(ColumnOption1)
-            st.dataframe(conn.query("SELECT CourseName FROM Course", ttl=1))
+    st.dataframe(conn.query("SELECT RoundID, RoundScore, RoundDate, CourseName "
+                            "FROM GolfRound GR "
+                            "JOIN Course C ON GR.CourseID = C.CourseID", ttl=1))
 
-    if ColumnOption1 == "Round":
-        with st.spinner("Figuring stuff out..."):
-            st.write(ColumnOption1)
-            st.dataframe(conn.query("SELECT RoundID, RoundScore, RoundDate, CourseName "
-                                    "FROM GolfRound GR "
-                                    "JOIN Course C ON GR.CourseID = C.CourseID", ttl=1))
+    st.dataframe(conn.query("SELECT CourseName FROM Course", ttl=1))
 
 view_rounds()
 
